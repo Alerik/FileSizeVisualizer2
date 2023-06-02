@@ -1,17 +1,24 @@
-﻿using System;
+﻿using FontAwesome.WPF;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace FileSizeVisualizer2
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
+		private bool indexLoaded = false;
+		public bool IndexLoaded { get { return indexLoaded; } private set { indexLoaded = value; OnPropertyChanged(); } }
+		public FontAwesomeIcon LoadingIcon { get; private set; }
 		FileIndex index;
 		public static MainWindow Instance;
 		private PieView pieView;
@@ -27,16 +34,27 @@ namespace FileSizeVisualizer2
 		//private static string rootDirectory = "C:\\Users\\jacks\\test";
 		private static string rootDirectory = @"C:\Users\Jackson\Professional";
 
+		public event PropertyChangedEventHandler? PropertyChanged;
+		protected void OnPropertyChanged([CallerMemberName] string name = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+		}
+
 		public MainWindow()
 		{
 			Instance = this;
 			InitializeComponent();
 			index = new FileIndex(rootDirectory);
+			Array iconValues = Enum.GetValues(typeof(FontAwesomeIcon));
+			LoadingIcon = (FontAwesomeIcon)iconValues.GetValue(new Random().Next(iconValues.Length));
+			DataContext = this;
 		}
 
 		private async void Grid_Loaded(object sender, RoutedEventArgs e)
 		{
 			await FileLoader.Load(index.Root);
+			IndexLoaded = true;
+			
 			LoadDirectory();
 		}
 
