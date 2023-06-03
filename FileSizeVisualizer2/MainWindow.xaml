@@ -7,13 +7,27 @@
 		xmlns:mi="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         xmlns:local="clr-namespace:FileSizeVisualizer2"
         mc:Ignorable="d"
-        Title="File Size Visualizer" Height="450" Width="800" Icon="/MainWindowIcon.png">
+        Title="{Binding Title}" Height="450" Width="800" Icon="/MainWindowIcon.png">
 	<Window.Resources>
 		<Style x:Key="loaderStyle" TargetType="{x:Type StackPanel}">
 			<Setter Property="Visibility" Value="Visible"/>
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding IndexLoaded}" Value="True">
 					<Setter Property="Visibility" Value="Hidden"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding IndexLoaded}" Value="False">
+					<Setter Property="Visibility" Value="Visible"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="inverseLoaderStyle" TargetType="{x:Type ScrollViewer}">
+			<Setter Property="Visibility" Value="Visible"/>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding IndexLoaded}" Value="False">
+					<Setter Property="Visibility" Value="Hidden"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding IndexLoaded}" Value="True">
+					<Setter Property="Visibility" Value="Visible"/>
 				</DataTrigger>
 			</Style.Triggers>
 		</Style>
@@ -22,6 +36,9 @@
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding IndexLoaded}" Value="True">
 					<Setter Property="Visibility" Value="Hidden"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding IndexLoaded}" Value="False">
+					<Setter Property="Visibility" Value="Visible"/>
 				</DataTrigger>
 			</Style.Triggers>
 		</Style>
@@ -38,14 +55,22 @@
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
-		<DockPanel Name="navBar" Grid.ColumnSpan="2" LastChildFill="True">
-			<Button Grid.Column="1" Click="Button_Click">
+		<Grid Name="navBar" Grid.ColumnSpan="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="32"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="32"/>
+			</Grid.ColumnDefinitions>
+			<Button Name="navBack" Click="navBack_Click">
 				<mi:MaterialIcon Kind="ArrowBack"/>
 			</Button>
-			<mi:MaterialIcon Kind="Folder" Margin="0,0,-32,0" Panel.ZIndex="1"/>
-			<TextBox Text="{Binding CurrentPath}" FontSize="18" Padding="32,0,0,0">
+			<mi:MaterialIcon Kind="Folder" Margin="0,0,-64,0" Panel.ZIndex="1"/>
+			<TextBox Name="txtNavbar" KeyDown="txtNavbar_KeyDown" Text="{Binding CurrentPath}" FontSize="18" Padding="32,0,0,0" HorizontalAlignment="Stretch" Grid.Column="1">
 			</TextBox>
-		</DockPanel>
+			<Button Name="btnStartIndex" Click="btnStartIndex_Click" Grid.Column="2">
+				<mi:MaterialIcon Kind="PlayOutline" Foreground="ForestGreen"/>
+			</Button>
+		</Grid>
 		<fa:ImageAwesome Style="{StaticResource spinnerStyle}" Icon="{Binding LoadingIcon}" Spin="True" Height="96" Width="96" Grid.Row="2">
 		</fa:ImageAwesome>
 		<StackPanel Style="{StaticResource loaderStyle}" Orientation="Vertical" Grid.Row="3" HorizontalAlignment="Center">
@@ -58,7 +83,7 @@
 			</StackPanel>
 			<TextBlock Text="{Binding FormattedSize}" FontSize="28" TextAlignment="Center" FontWeight="DemiBold"/>
 		</StackPanel>
-		<ScrollViewer Grid.Row="1" Grid.RowSpan="3">
+		<ScrollViewer Style="{StaticResource inverseLoaderStyle}" Grid.Row="1" Grid.RowSpan="3">
 			<StackPanel Name="filePanel">
 				
 			</StackPanel>

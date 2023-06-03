@@ -23,6 +23,14 @@ namespace FileSizeVisualizer2
 	{
 		private readonly DispatcherTimer loadTimer;
 		private bool indexLoaded = false;
+		public string Title
+		{
+			get
+			{
+				return $"File Size Visualizer ({RootDirectory})";
+			}
+		}
+
 		public bool IndexLoaded { get { return indexLoaded; } private set { indexLoaded = value; OnPropertyChanged(); } }
 
 		private int fileCount = 0;
@@ -38,11 +46,11 @@ namespace FileSizeVisualizer2
 		private string formattedSize = "";
 		public string FormattedSize { get { return formattedSize; } private set { formattedSize = value; OnPropertyChanged(); } }
 		public FontAwesomeIcon LoadingIcon { get; private set; }
-		private readonly FileIndex index;
+		private FileIndex? index;
 		private PieView? pieView;
 
-		private const string START_DIRECTORY = @"C:\Users\Jackson\Professional";
-		private string rootDirectory = START_DIRECTORY;
+		private const string START_DIRECTORY = "";
+		private string rootDirectory;
 		public string RootDirectory
 		{
 			get => rootDirectory;
@@ -53,7 +61,7 @@ namespace FileSizeVisualizer2
 			}
 		}
 
-		private string currentPath = START_DIRECTORY;
+		private string currentPath;
 		public string CurrentPath
 		{
 			get => currentPath;
@@ -81,13 +89,15 @@ namespace FileSizeVisualizer2
 			FormattedSize = Formatting.FormatFileSize(TotalSize);
 		}
 
-		public MainWindow()
+		public MainWindow() : this(START_DIRECTORY) { }
+		public MainWindow(string startDirectory)
 		{
 			InitializeComponent();
+			rootDirectory = startDirectory;
+			currentPath = startDirectory;
 			loadTimer = new DispatcherTimer();
 			loadTimer.Tick += (o, e) => LoadTime++;
 			loadTimer.Interval = new TimeSpan(0, 0, 1);
-			index = new FileIndex(RootDirectory);
 
 			Array iconValues = Enum.GetValues(typeof(FontAwesomeIcon));
 
@@ -101,13 +111,21 @@ namespace FileSizeVisualizer2
 			DataContext = this;
 		}
 
-		private async void Grid_Loaded(object sender, RoutedEventArgs e)
+		private void Grid_Loaded(object sender, RoutedEventArgs e)
 		{
+			if(!string.IsNullOrEmpty(RootDirectory))
+				LoadIndex();
+		}
+
+		private async void LoadIndex()
+		{
+			IndexLoaded = false;
+			index = new FileIndex(RootDirectory);
 			DispatcherTimer loadTimer = new();
 			loadTimer.Tick += (o, e) => LoadTime++;
 			loadTimer.Interval = new TimeSpan(0, 0, 1);
 			loadTimer.Start();
-			await FileLoader.Load(index.Root);
+			await FileLoader.StartLoad(index.Root);
 			IndexLoaded = true;
 			loadTimer.Stop();
 			
@@ -148,6 +166,7 @@ namespace FileSizeVisualizer2
 			{
 
 			}
+			filePanel.InvalidateVisual();
 			pieView = new PieView(large, index.Top.Size);
 			grid.Children.Add(pieView);
 			pieView.SetValue(Grid.ColumnProperty, 1);
@@ -170,10 +189,26 @@ namespace FileSizeVisualizer2
 			CurrentPath = path;
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void navBack_Click(object sender, RoutedEventArgs e)
 		{
+
 			index.Back();
 			LoadDirectory();
+		}
+
+		private void btnStartIndex_Click(object sender, RoutedEventArgs e)
+		{
+			RootDirectory = CurrentPath;
+			LoadIndex();
+		}
+
+		private void txtNavbar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.Enter)
+			{
+				RootDirectory = txtNavbar.Text;
+				LoadIndex();
+			}
 		}
 	}
 }

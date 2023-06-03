@@ -78,7 +78,13 @@ namespace FileSizeVisualizer2
 			return await Task.Run(() => Directory.GetDirectories(path));
 		}
 
-		public static async Task<bool> Load(BrowserFile file)
+		public static async Task<bool> StartLoad(BrowserFile file)
+		{
+			LoadedFiles = 0;
+			TotalSize = 0;
+			return await Load(file);
+		}
+		private static async Task<bool> Load(BrowserFile file)
 		{
 			if (file.FileType == BrowserFile.FileTypes.File)
 			{
