@@ -10,6 +10,8 @@ using System.Windows.Controls;
 using System.Linq;
 using System.Diagnostics;
 using System.Threading;
+using System.Windows.Threading;
+using System.Runtime.Serialization;
 
 namespace FileSizeVisualizer2
 {
@@ -18,8 +20,22 @@ namespace FileSizeVisualizer2
 	/// </summary>
 	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
+		private readonly DispatcherTimer loadTimer;
 		private bool indexLoaded = false;
 		public bool IndexLoaded { get { return indexLoaded; } private set { indexLoaded = value; OnPropertyChanged(); } }
+
+		private int fileCount = 0;
+		public int FileCount { get { return fileCount; } private set { fileCount = value; OnPropertyChanged(); } }
+
+		private int loadTime = 0;
+		public int LoadTime {get { return loadTime; }  private set { loadTime = value; OnPropertyChanged(); } }
+
+
+		private long totalSize = 0;
+		public long TotalSize {get { return totalSize; }  private set { totalSize = value; OnPropertyChanged(); } }
+
+		private string formattedSize = "";
+		public string FormattedSize { get { return formattedSize; } private set { formattedSize = value; OnPropertyChanged(); } }
 		public FontAwesomeIcon LoadingIcon { get; private set; }
 		FileIndex index;
 		public static MainWindow Instance;
@@ -34,7 +50,7 @@ namespace FileSizeVisualizer2
 		}
 
 		//private static string rootDirectory = "C:\\Users\\jacks\\test";
-		private static string rootDirectory = @"C:\Users\Jackson";
+		private static string rootDirectory = @"C:\Users\Jackson\Professional";
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -42,20 +58,41 @@ namespace FileSizeVisualizer2
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 
+		private void OnFilesLoaded(object sender, FileLoader.FilesLoadedArgs args)
+		{
+			FileCount = args.Count;
+		}
+
+		private void OnFileSize(object sender, FileLoader.FileSizeArgs args)
+		{
+			TotalSize = args.Size;
+			FormattedSize = Formatting.FormatFileSize(TotalSize);
+		}
+
 		public MainWindow()
 		{
 			Instance = this;
 			InitializeComponent();
+			loadTimer = new DispatcherTimer();
+			loadTimer.Tick += (o, e) => LoadTime++;
+			loadTimer.Interval = new TimeSpan(0, 0, 1);
 			index = new FileIndex(rootDirectory);
 			Array iconValues = Enum.GetValues(typeof(FontAwesomeIcon));
 			LoadingIcon = (FontAwesomeIcon)iconValues.GetValue(new Random().Next(iconValues.Length));
+			FileLoader.OnFilesLoaded += OnFilesLoaded;
+			FileLoader.OnFileSize += OnFileSize;
 			DataContext = this;
 		}
 
 		private async void Grid_Loaded(object sender, RoutedEventArgs e)
 		{
+			DispatcherTimer loadTimer = new DispatcherTimer();
+			loadTimer.Tick += (o, e) => LoadTime++;
+			loadTimer.Interval = new TimeSpan(0, 0, 1);
+			loadTimer.Start();
 			await FileLoader.Load(index.Root);
 			IndexLoaded = true;
+			loadTimer.Stop();
 			
 			LoadDirectory();
 		}
