@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Linq;
+using System.Diagnostics;
+using System.Threading;
 
 namespace FileSizeVisualizer2
 {
@@ -32,7 +34,7 @@ namespace FileSizeVisualizer2
 		}
 
 		//private static string rootDirectory = "C:\\Users\\jacks\\test";
-		private static string rootDirectory = @"C:\Users\Jackson\Professional";
+		private static string rootDirectory = @"C:\Users\Jackson";
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		protected void OnPropertyChanged([CallerMemberName] string name = null)

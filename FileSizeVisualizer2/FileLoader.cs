@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Runtime;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace FileSizeVisualizer2
 {
@@ -72,18 +75,18 @@ namespace FileSizeVisualizer2
 					return false;
 				}
 
-				foreach (string childFolder in folders)
-				{
-					BrowserFile childBrowserFolder = new BrowserFile(childFolder, BrowserFile.FileTypes.Folder);
-					await Load(childBrowserFolder);
-					file.AddChild(childBrowserFolder);
-				}
-
 				foreach (string childFile in files)
 				{
 					BrowserFile childBrowserFile = new BrowserFile(childFile, BrowserFile.FileTypes.File);
 					await Load(childBrowserFile);
 					file.AddChild(childBrowserFile);
+				}
+
+				foreach (string childFolder in folders)
+				{
+					BrowserFile childBrowserFolder = new BrowserFile(childFolder, BrowserFile.FileTypes.Folder);
+					await Task.Run(() => Load(childBrowserFolder));
+					file.AddChild(childBrowserFolder);
 				}
 			}
 			file.Loaded = true;
