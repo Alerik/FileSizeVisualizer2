@@ -52,7 +52,7 @@
 			</StackPanel>
 			<TextBlock Text="{Binding FormattedSize}" FontSize="28" TextAlignment="Center" FontWeight="DemiBold"/>
 		</StackPanel>
-		<ScrollViewer Grid.Row="1">
+		<ScrollViewer Grid.Row="1" Grid.RowSpan="3">
 			<StackPanel Name="filePanel">
 				
 			</StackPanel>

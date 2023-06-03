@@ -24,21 +24,26 @@ namespace FileSizeVisualizer2
 	public partial class FileViewer : UserControl
 	{
 		public BrowserFile File;
+		public delegate void Navigator(string path);
 
-		public FileViewer(BrowserFile file)
+		private readonly Navigator Navigate;
+
+		public FileViewer(BrowserFile file, Navigator navigate)
 		{
 			InitializeComponent();
 			this.File = file;
 			Icon icon = DefaultIcons.FolderLarge;
+			Navigate = navigate;
 
-			if (file.FileType == BrowserFile.FileTypes.File)
+			if (file.FileType == BrowserFile.FileTypes.File 
+				&& System.Drawing.Icon.ExtractAssociatedIcon(file.Path) is Icon _icon)
 			{
-				icon = System.Drawing.Icon.ExtractAssociatedIcon(file.Path);
+				icon = _icon;
 			}
 
-			MemoryStream strm = new MemoryStream();
+			MemoryStream strm = new();
 			icon.Save(strm);
-			IconBitmapDecoder ibd = new IconBitmapDecoder(strm, BitmapCreateOptions.None, BitmapCacheOption.None);
+			IconBitmapDecoder ibd = new(strm, BitmapCreateOptions.None, BitmapCacheOption.None);
 			iconImage.Source = ibd.Frames[0];
 			filePath.Text = file.Path;
 			fileSize.Text = Formatting.FormatFileSize(file.Size);
@@ -48,12 +53,11 @@ namespace FileSizeVisualizer2
 		{
 			if (File.FileType == BrowserFile.FileTypes.Folder)
 			{
-				MainWindow.Instance.Navigate(File.Path);
+				Navigate(File.Path);
 			}
 			else
 			{
-				Process proc = Process.Start(File.Path);
-
+				Process.Start("explorer.exe", File.Path);
 			}
 		}
 	}

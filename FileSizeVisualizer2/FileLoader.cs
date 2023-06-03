@@ -22,7 +22,7 @@ namespace FileSizeVisualizer2
 			set
 			{
 				loadedFiles = value;
-				OnFilesLoaded(typeof(FileLoader), new FilesLoadedArgs(loadedFiles));
+				OnFilesLoaded?.Invoke(typeof(FileLoader), new FilesLoadedArgs(loadedFiles));
 			}
 		}
 
@@ -36,7 +36,7 @@ namespace FileSizeVisualizer2
 			set
 			{
 				totalSize = value;
-				OnFileSize(typeof(FileLoader), new FileSizeArgs(totalSize));
+				OnFileSize?.Invoke(typeof(FileLoader), new FileSizeArgs(totalSize));
 			}
 		}
 		public class FilesLoadedArgs : EventArgs
@@ -59,10 +59,10 @@ namespace FileSizeVisualizer2
 		}
 
 		public delegate void FilesLoadedHandler(object source, FilesLoadedArgs e);
-		public static event FilesLoadedHandler OnFilesLoaded;
+		public static event FilesLoadedHandler? OnFilesLoaded;
 
 		public delegate void FilesSizeHandler(object source, FileSizeArgs e);
-		public static event FilesSizeHandler OnFileSize;
+		public static event FilesSizeHandler? OnFileSize;
 		private static async Task<long> GetFileSizeAsync(string path)
 		{
 			return await Task.Run(() => new FileInfo(path).Length);
@@ -88,13 +88,13 @@ namespace FileSizeVisualizer2
 				}
 				catch (System.IO.FileNotFoundException e)
 				{
-					Console.WriteLine("Unable to find file " + file.Path);
+					Trace.WriteLine($"Unable to find file {file.Path}\n{e}");
 					file.Size = -1;
 					return false;
 				}
 				catch (System.Security.SecurityException e)
 				{
-					Console.WriteLine("Unable to access " + file.Path);
+					Trace.WriteLine($"Unable to access {file.Path} \n {e}");
 					file.Size = -1;
 					return false;
 				}
@@ -111,7 +111,7 @@ namespace FileSizeVisualizer2
 				catch (System.UnauthorizedAccessException e)
 				{
 					Console.WriteLine(e);
-					files = new string[0];
+					files = Array.Empty<string>();
 					return false;
 				}
 				string[] folders;
@@ -122,13 +122,13 @@ namespace FileSizeVisualizer2
 				catch (System.UnauthorizedAccessException e)
 				{
 					Console.WriteLine(e);
-					folders = new string[0];
+					folders = Array.Empty<string>();
 					return false;
 				}
 
 				foreach (string childFile in files)
 				{
-					BrowserFile childBrowserFile = new BrowserFile(childFile, BrowserFile.FileTypes.File);
+					BrowserFile childBrowserFile = new(childFile, BrowserFile.FileTypes.File);
 					await Load(childBrowserFile);
 					file.AddChild(childBrowserFile);
 				}
@@ -138,7 +138,7 @@ namespace FileSizeVisualizer2
 				long size = 0;
 				foreach (string childFolder in folders)
 				{
-					BrowserFile childBrowserFolder = new BrowserFile(childFolder, BrowserFile.FileTypes.Folder);
+					BrowserFile childBrowserFolder = new(childFolder, BrowserFile.FileTypes.Folder);
 					await Task.Run(() => Load(childBrowserFolder));
 					file.AddChild(childBrowserFolder);
 					size += childBrowserFolder.Size;

@@ -11,7 +11,7 @@ namespace FileSizeVisualizer2
 {
 	public static class DefaultIcons
 	{
-		private static readonly Lazy<Icon> _lazyFolderIcon = new Lazy<Icon>(FetchIcon, true);
+		private static readonly Lazy<Icon> _lazyFolderIcon = new(FetchIcon, true);
 
 		public static Icon FolderLarge
 		{
@@ -28,7 +28,7 @@ namespace FileSizeVisualizer2
 
 		private static Icon ExtractFromPath(string path)
 		{
-			SHFILEINFO shinfo = new SHFILEINFO();
+			SHFILEINFO shinfo = new();
 			SHGetFileInfo(
 				path,
 				0, ref shinfo, (uint)Marshal.SizeOf(shinfo),

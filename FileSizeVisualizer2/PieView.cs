@@ -10,9 +10,9 @@ namespace FileSizeVisualizer2
 {
 	public class PieView : FrameworkElement
 	{
-		internal List<FileViewer> viewers = new List<FileViewer>();
+		internal List<FileViewer> viewers = new();
 		internal long maxSize = 0;
-		double radius = 75;
+		readonly double radius = 75;
 
 		public PieView(List<FileViewer> views, long _maxSize)
 		{
@@ -41,15 +41,14 @@ namespace FileSizeVisualizer2
 				//Color color = LerpColor(start, end, (float)viewers[i].File.Size / maxFile * 1 / (i + 1));
 				Color color = LerpColor(start, end, i / (float)(Math.Min(viewers.Count, 6)-1));
 				Brush b = new SolidColorBrush(color);
-				Pen p = new Pen(Brushes.Gray, 1);
-				Rect r = new Rect(10, 0, 2 * radius, 2 * radius);
+				Pen p = new(Brushes.Gray, 1);
+				Rect r = new(10, 0, 2 * radius, 2 * radius);
 
 				drawingContext.DrawArc(p, b, r, angle, degAngle);
 				angle += degAngle;
 			}
 
 			long totalSize = viewers.Sum(s => s.File.Size);
-			drawingContext.DrawText(new FormattedText(totalSize.ToString(), System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, new Typeface("Verdana"), 24, Brushes.Black), new Point(10, radius * 2 + 10));
 			//drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, 100, 100));
 			//base.OnRender(drawingContext);
 		}
@@ -70,7 +69,7 @@ namespace FileSizeVisualizer2
 			int hi = ((int)Math.Floor(hue / 60)) % 6;
 			double f = hue / 60 - Math.Floor(hue / 60);
 
-			value = value * 255;
+			value *= 255;
 			byte v =(byte)value;
 			byte p = (byte)(value * (1 - saturation));
 			byte q = (byte)(value * (1 - f * saturation));

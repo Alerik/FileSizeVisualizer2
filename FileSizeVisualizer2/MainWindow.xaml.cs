@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Threading;
 using System.Runtime.Serialization;
+using System.Drawing;
 
 namespace FileSizeVisualizer2
 {
@@ -37,9 +38,8 @@ namespace FileSizeVisualizer2
 		private string formattedSize = "";
 		public string FormattedSize { get { return formattedSize; } private set { formattedSize = value; OnPropertyChanged(); } }
 		public FontAwesomeIcon LoadingIcon { get; private set; }
-		FileIndex index;
-		public static MainWindow Instance;
-		private PieView pieView;
+		private readonly FileIndex index;
+		private PieView? pieView;
 		public static string RootDirectory
 		{
 			get => RootDirectory;
@@ -50,10 +50,10 @@ namespace FileSizeVisualizer2
 		}
 
 		//private static string rootDirectory = "C:\\Users\\jacks\\test";
-		private static string rootDirectory = @"C:\Users\Jackson\Professional";
+		private readonly static string rootDirectory = @"C:\Users\Jackson\Professional";
 
 		public event PropertyChangedEventHandler? PropertyChanged;
-		protected void OnPropertyChanged([CallerMemberName] string name = null)
+		protected void OnPropertyChanged([CallerMemberName] string? name = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
@@ -71,14 +71,19 @@ namespace FileSizeVisualizer2
 
 		public MainWindow()
 		{
-			Instance = this;
 			InitializeComponent();
 			loadTimer = new DispatcherTimer();
 			loadTimer.Tick += (o, e) => LoadTime++;
 			loadTimer.Interval = new TimeSpan(0, 0, 1);
 			index = new FileIndex(rootDirectory);
+
 			Array iconValues = Enum.GetValues(typeof(FontAwesomeIcon));
-			LoadingIcon = (FontAwesomeIcon)iconValues.GetValue(new Random().Next(iconValues.Length));
+
+			if (iconValues.GetValue(new Random().Next(iconValues.Length)) is object icon)
+				LoadingIcon = (FontAwesomeIcon)icon;
+			else
+				LoadingIcon = FontAwesomeIcon.Cog;
+
 			FileLoader.OnFilesLoaded += OnFilesLoaded;
 			FileLoader.OnFileSize += OnFileSize;
 			DataContext = this;
@@ -86,7 +91,7 @@ namespace FileSizeVisualizer2
 
 		private async void Grid_Loaded(object sender, RoutedEventArgs e)
 		{
-			DispatcherTimer loadTimer = new DispatcherTimer();
+			DispatcherTimer loadTimer = new();
 			loadTimer.Tick += (o, e) => LoadTime++;
 			loadTimer.Interval = new TimeSpan(0, 0, 1);
 			loadTimer.Start();
@@ -101,15 +106,15 @@ namespace FileSizeVisualizer2
 		{
 			filePanel.Children.Clear();
 
-			List<FileViewer> viewers = new List<FileViewer>();
+			List<FileViewer> viewers = new();
 
 			foreach (BrowserFile folder in index.Top.Folders)
 			{
-				viewers.Add(new FileViewer(folder));
+				viewers.Add(new FileViewer(folder, Navigate));
 			}
 			foreach (BrowserFile file in index.Top.Files)
 			{
-				viewers.Add(new FileViewer(file));
+				viewers.Add(new FileViewer(file, Navigate));
 			}
 			viewers.Sort((a, b) => b.File.Size.CompareTo(a.File.Size));
 
@@ -118,7 +123,7 @@ namespace FileSizeVisualizer2
 				filePanel.Children.Add(view);
 			}
 
-			List<FileViewer> large = new List<FileViewer>();
+			List<FileViewer> large = new();
 
 			for (int i = 0; i < 5; i++)
 			{
@@ -142,7 +147,7 @@ namespace FileSizeVisualizer2
 		{
 			try
 			{
-				int navIndex = index.Top.Children.FindIndex(f => f.Path == path);
+				int navIndex = index.Top.Children?.FindIndex(f => f.Path == path) ?? 0;
 				index.Navigate(navIndex);
 				LoadDirectory();
 			}

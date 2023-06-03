@@ -15,17 +15,6 @@ namespace FileSizeVisualizer2
 		private readonly Stack<BrowserFile> fileStack;
 		public BrowserFile Top => fileStack.Peek();
 
-		public bool Loaded => Top.Loaded;
-		private const int threadCount = 20;
-
-		private int loaded = 0;
-		private int activeFiles = 0;
-
-		public FileIndex()
-		{
-
-		}
-
 		public FileIndex(string rootPath)
 		{
 			Root = new BrowserFile(rootPath, BrowserFile.FileTypes.Folder);
@@ -46,9 +35,5 @@ namespace FileSizeVisualizer2
 			if (fileStack.Count > 1)
 				fileStack.Pop();
 		}
-
-		//You probably need to re-think this or re-design it
-		// Right now, it will load everything from the root directory, and if the root dir is < 200 files, it WILL NOT load everything
-
-			}
+	}
 }

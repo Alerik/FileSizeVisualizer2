@@ -68,7 +68,7 @@ namespace FileSizeVisualizer2
 			double ye = rect.Y + dy + (Math.Sin(startRadians + sweepRadians) * dy);
 
 			// draw the arc into a stream geometry
-			StreamGeometry streamGeom = new StreamGeometry();
+			StreamGeometry streamGeom = new();
 			using (StreamGeometryContext ctx = streamGeom.Open())
 			{
 				bool isLargeArc = Math.Abs(sweepDegrees) > 180;
@@ -81,7 +81,7 @@ namespace FileSizeVisualizer2
 			}
 
 			// create the drawing
-			GeometryDrawing drawing = new GeometryDrawing();
+			GeometryDrawing drawing = new();
 			drawing.Geometry = streamGeom;
 			return drawing;
 		}
