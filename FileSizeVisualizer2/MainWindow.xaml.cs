@@ -40,17 +40,29 @@ namespace FileSizeVisualizer2
 		public FontAwesomeIcon LoadingIcon { get; private set; }
 		private readonly FileIndex index;
 		private PieView? pieView;
-		public static string RootDirectory
+
+		private const string START_DIRECTORY = @"C:\Users\Jackson\Professional";
+		private string rootDirectory = START_DIRECTORY;
+		public string RootDirectory
 		{
-			get => RootDirectory;
+			get => rootDirectory;
 			set
 			{
-				
+				rootDirectory = value;
+				OnPropertyChanged();
 			}
 		}
 
-		//private static string rootDirectory = "C:\\Users\\jacks\\test";
-		private readonly static string rootDirectory = @"C:\Users\Jackson\Professional";
+		private string currentPath = START_DIRECTORY;
+		public string CurrentPath
+		{
+			get => currentPath;
+			set
+			{
+				currentPath = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -75,7 +87,7 @@ namespace FileSizeVisualizer2
 			loadTimer = new DispatcherTimer();
 			loadTimer.Tick += (o, e) => LoadTime++;
 			loadTimer.Interval = new TimeSpan(0, 0, 1);
-			index = new FileIndex(rootDirectory);
+			index = new FileIndex(RootDirectory);
 
 			Array iconValues = Enum.GetValues(typeof(FontAwesomeIcon));
 
@@ -153,8 +165,9 @@ namespace FileSizeVisualizer2
 			}
 			catch (InvalidOperationException e)
 			{
-				Console.WriteLine(e);
+				Trace.WriteLine(e);
 			}
+			CurrentPath = path;
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)

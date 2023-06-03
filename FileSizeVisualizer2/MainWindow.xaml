@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:fa="http://schemas.fontawesome.io/icons/"
+		xmlns:mi="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         xmlns:local="clr-namespace:FileSizeVisualizer2"
         mc:Ignorable="d"
-        Title="File Size Visualizer" Height="450" Width="800">
+        Title="File Size Visualizer" Height="450" Width="800" Icon="/MainWindowIcon.png">
 	<Window.Resources>
 		<Style x:Key="loaderStyle" TargetType="{x:Type StackPanel}">
 			<Setter Property="Visibility" Value="Visible"/>
@@ -36,10 +37,15 @@
 			<ColumnDefinition Width="4*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<TextBlock Name="currentDirector"/>
-		<Button Grid.Column="1" Click="Button_Click">
-			<TextBlock Text="Back"/>
-		</Button>
+
+		<DockPanel Name="navBar" Grid.ColumnSpan="2" LastChildFill="True">
+			<Button Grid.Column="1" Click="Button_Click">
+				<mi:MaterialIcon Kind="ArrowBack"/>
+			</Button>
+			<mi:MaterialIcon Kind="Folder" Margin="0,0,-32,0" Panel.ZIndex="1"/>
+			<TextBox Text="{Binding CurrentPath}" FontSize="18" Padding="32,0,0,0">
+			</TextBox>
+		</DockPanel>
 		<fa:ImageAwesome Style="{StaticResource spinnerStyle}" Icon="{Binding LoadingIcon}" Spin="True" Height="96" Width="96" Grid.Row="2">
 		</fa:ImageAwesome>
 		<StackPanel Style="{StaticResource loaderStyle}" Orientation="Vertical" Grid.Row="3" HorizontalAlignment="Center">
