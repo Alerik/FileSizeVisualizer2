@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="FileSizeVisualizer2.FolderInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FileSizeVisualizer2"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Background="Red">
+    <ItemsControl Name="Folders" ItemsSource="{Binding Path=Files, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:MainWindow}}">
+		<ItemsControl.ItemTemplate>
+			<DataTemplate>
+				<StackPanel>
+					<TextBlock Text="{Binding Size}"/>
+				</StackPanel>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+            
+    </ItemsControl>
+</UserControl>

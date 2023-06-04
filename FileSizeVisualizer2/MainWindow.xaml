@@ -9,7 +9,7 @@
 		mc:Ignorable="d"
         Title="{Binding WindowTitle}" Height="450" Width="800" Icon="/MainWindowIcon.png">
 	<Window.Resources>
-		<Style x:Key="loaderStyle" TargetType="{x:Type StackPanel}">
+		<Style x:Key="loaderStyle" TargetType="{x:Type FrameworkElement}">
 			<Setter Property="Visibility" Value="Visible"/>
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding IndexLoaded}" Value="True">
@@ -20,24 +20,13 @@
 				</DataTrigger>
 			</Style.Triggers>
 		</Style>
-		<Style x:Key="inverseLoaderStyle" TargetType="{x:Type ScrollViewer}">
+		<Style x:Key="inverseLoaderStyle" TargetType="{x:Type FrameworkElement}">
 			<Setter Property="Visibility" Value="Visible"/>
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding IndexLoaded}" Value="False">
 					<Setter Property="Visibility" Value="Hidden"/>
 				</DataTrigger>
 				<DataTrigger Binding="{Binding IndexLoaded}" Value="True">
-					<Setter Property="Visibility" Value="Visible"/>
-				</DataTrigger>
-			</Style.Triggers>
-		</Style>
-		<Style x:Key="spinnerStyle" TargetType="{x:Type fa:ImageAwesome}">
-			<Setter Property="Visibility" Value="Visible"/>
-			<Style.Triggers>
-				<DataTrigger Binding="{Binding IndexLoaded}" Value="True">
-					<Setter Property="Visibility" Value="Hidden"/>
-				</DataTrigger>
-				<DataTrigger Binding="{Binding IndexLoaded}" Value="False">
 					<Setter Property="Visibility" Value="Visible"/>
 				</DataTrigger>
 			</Style.Triggers>
@@ -71,7 +60,7 @@
 				<mi:MaterialIcon Kind="PlayOutline" Foreground="ForestGreen"/>
 			</Button>
 		</Grid>
-		<fa:ImageAwesome Style="{StaticResource spinnerStyle}" Icon="{Binding LoadingIcon}" Spin="True" Height="96" Width="96" Grid.Row="2">
+		<fa:ImageAwesome Style="{StaticResource loaderStyle}" Icon="{Binding LoadingIcon}" Spin="True" Height="96" Width="96" Grid.Row="2">
 		</fa:ImageAwesome>
 		<StackPanel Style="{StaticResource loaderStyle}" Orientation="Vertical" Grid.Row="3" HorizontalAlignment="Center">
 			<StackPanel Orientation="Horizontal">
@@ -84,7 +73,7 @@
 			<TextBlock Text="{Binding FormattedSize}" FontSize="28" TextAlignment="Center" FontWeight="DemiBold"/>
 		</StackPanel>
 
-		<Grid Grid.Row="1" Panel.ZIndex="1" Margin="0,4,0,0" IsHitTestVisible="False">
+		<Grid Grid.Row="1" Panel.ZIndex="1" Margin="0,4,0,0" IsHitTestVisible="False" Style="{StaticResource inverseLoaderStyle}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="8"/>
 				<ColumnDefinition Width="5*"/>
@@ -105,5 +94,9 @@
 				</ListBox.ItemTemplate>
 			</ListBox>
 		</ScrollViewer>
+
+		<StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource inverseLoaderStyle}">
+			<local:FolderInfoControl Files="{Binding Files}" HorizontalAlignment="Stretch"></local:FolderInfoControl>
+		</StackPanel>
 	</Grid>
 </Window>

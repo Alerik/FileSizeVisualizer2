@@ -32,9 +32,9 @@ namespace FileSizeVisualizer2
 			return $"{(bytes * 1.0 / G).ToString("#.##")} Gb";
 		}
 
-		public static void DrawArc(this DrawingContext dc, Pen pen, Brush brush, Rect rect, double startDegrees, double sweepDegrees)
+		public static void DrawArc(this DrawingContext dc, Pen pen, Brush brush, Point center, double radius, double startDegrees, double sweepDegrees)
 		{
-			GeometryDrawing arc = CreateArcDrawing(rect, startDegrees, sweepDegrees);
+			GeometryDrawing arc = CreateArcDrawing(center, radius, startDegrees, sweepDegrees);
 			arc.Brush = brush;
 			arc.Pen = pen;
 			bool s = arc.IsSealed;
@@ -49,23 +49,19 @@ namespace FileSizeVisualizer2
 		/// <param name="startDegrees">Start angle of the arc degrees within the ellipse. 0 degrees is a line to the right.</param>
 		/// <param name="sweepDegrees">Sweep angle, -ve = Counterclockwise, +ve = Clockwise</param>
 		/// <returns>GeometryDrawing object</returns>
-		private static GeometryDrawing CreateArcDrawing(Rect rect, double startDegrees, double sweepDegrees)
+		private static GeometryDrawing CreateArcDrawing(Point center, double radius, double startDegrees, double sweepDegrees)
 		{
 			// degrees to radians conversion
 			double startRadians = startDegrees * Math.PI / 180.0;
 			double sweepRadians = sweepDegrees * Math.PI / 180.0;
 
-			// x and y radius
-			double dx = rect.Width / 2;
-			double dy = rect.Height / 2;
-
 			// determine the start point 
-			double xs = rect.X + dx + (Math.Cos(startRadians) * dx);
-			double ys = rect.Y + dy + (Math.Sin(startRadians) * dy);
+			double xs = center.X + (Math.Cos(startRadians) * radius);
+			double ys = center.Y + (Math.Sin(startRadians) * radius);
 
 			// determine the end point 
-			double xe = rect.X + dx + (Math.Cos(startRadians + sweepRadians) * dx);
-			double ye = rect.Y + dy + (Math.Sin(startRadians + sweepRadians) * dy);
+			double xe = center.X + (Math.Cos(startRadians + sweepRadians) * radius);
+			double ye = center.Y + (Math.Sin(startRadians + sweepRadians) * radius);
 
 			// draw the arc into a stream geometry
 			StreamGeometry streamGeom = new();
@@ -75,8 +71,8 @@ namespace FileSizeVisualizer2
 				SweepDirection sweepDirection = sweepDegrees < 0 ? SweepDirection.Counterclockwise : SweepDirection.Clockwise;
 
 				ctx.BeginFigure(new Point(xs, ys), true, true);
-				ctx.ArcTo(new Point(xe, ye), new Size(dx, dy), 0, isLargeArc, sweepDirection, true, true);
-				ctx.LineTo(new Point(dx, dy), true, true);
+				ctx.ArcTo(new Point(xe, ye), new Size(radius, radius), 0, isLargeArc, sweepDirection, true, true);
+				ctx.LineTo(new Point(center.X, center.Y), true, true);
 				ctx.LineTo(new Point(xs, ys), true, true);
 			}
 

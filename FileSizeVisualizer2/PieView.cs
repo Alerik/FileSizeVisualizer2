@@ -64,7 +64,7 @@ namespace FileSizeVisualizer2
 			float value = max / 255f;
 			return new float[] { hue, saturation, value };
 		}
-		private static Color HsvToRgb(float hue, float saturation, float value)
+		public static Color HsvToRgb(float hue, float saturation, float value)
 		{
 			int hi = ((int)Math.Floor(hue / 60)) % 6;
 			double f = hue / 60 - Math.Floor(hue / 60);
@@ -88,7 +88,7 @@ namespace FileSizeVisualizer2
 			else
 				return Color.FromArgb(255, v, p, q);
 		}
-		private static Color LerpColor(Color startColor, Color endColor, float weight)
+		public static Color LerpColor(Color startColor, Color endColor, float weight)
 		{
 			float[] sHsv = ToHSV(startColor);
 			float[] eHsv = ToHSV(endColor);
