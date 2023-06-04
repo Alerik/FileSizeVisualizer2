@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace FileSizeVisualizer2
@@ -16,7 +12,8 @@ namespace FileSizeVisualizer2
 
 		public List<BrowserFile> Files
 		{
-			get { return (List<BrowserFile>)GetValue(FilesProperty); } set { SetValue(FilesProperty, value); }
+			get { return (List<BrowserFile>)GetValue(FilesProperty); }
+			set { SetValue(FilesProperty, value); }
 		}
 
 		protected override void OnRender(DrawingContext drawingContext)
@@ -27,12 +24,12 @@ namespace FileSizeVisualizer2
 			Color end = Colors.Red;
 			Color start = Colors.Green;
 			double availableWidth = ActualWidth - 2 * margin;
-			double radius = availableWidth/2;
+			double radius = availableWidth / 2;
 
 			long totalFileSize = 0;
 			for (int i = 0; i < Files.Count; i++)
 			{
-					totalFileSize += Files[i].Size;
+				totalFileSize += Files[i].Size;
 			}
 			drawingContext.DrawEllipse(Brushes.LightGray, null, new Point(margin + radius, margin + radius), radius, radius);
 			for (int i = 0; i < Files.Count; i++)

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -24,11 +20,20 @@ namespace FileSizeVisualizer2
 		public static string FormatFileSize(long bytes)
 		{
 			if (bytes < K)
+			{
 				return $"{bytes} bytes";
+			}
+
 			if (bytes < M)
+			{
 				return $"{DivideUp(bytes, K):#.##} Kb";
+			}
+
 			if (bytes < G)
+			{
 				return $"{bytes * 1.0 / M:#.##} Mb";
+			}
+
 			return $"{bytes * 1.0 / G:#.##} Gb";
 		}
 
@@ -99,23 +104,35 @@ namespace FileSizeVisualizer2
 			double f = hue / 60 - Math.Floor(hue / 60);
 
 			value *= 255;
-			byte v =(byte)value;
+			byte v = (byte)value;
 			byte p = (byte)(value * (1 - saturation));
 			byte q = (byte)(value * (1 - f * saturation));
 			byte t = (byte)(value * (1 - (1 - f) * saturation));
 
 			if (hi == 0)
+			{
 				return Color.FromArgb(255, v, t, p);
+			}
 			else if (hi == 1)
+			{
 				return Color.FromArgb(255, q, v, p);
+			}
 			else if (hi == 2)
+			{
 				return Color.FromArgb(255, p, v, t);
+			}
 			else if (hi == 3)
+			{
 				return Color.FromArgb(255, p, q, v);
+			}
 			else if (hi == 4)
+			{
 				return Color.FromArgb(255, t, p, v);
+			}
 			else
+			{
 				return Color.FromArgb(255, v, p, q);
+			}
 		}
 		public static Color LerpColor(Color startColor, Color endColor, float weight)
 		{

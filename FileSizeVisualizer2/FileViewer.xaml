@@ -7,6 +7,11 @@
 		xmlns:mi="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" Width="Auto" >
+	<UserControl.Resources>
+		<local:FilePathIconConverter x:Key="IconConverter">
+			
+		</local:FilePathIconConverter>
+	</UserControl.Resources>
 	<Grid Height="40">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="5*"/>
@@ -15,6 +20,6 @@
 		</Grid.ColumnDefinitions>
 		<TextBlock FontWeight="DemiBold" Text="{Binding FilePath}"/>
 		<TextBlock FontWeight="SemiBold" Text="{Binding FormattedSize}" Grid.Column="1"/>
-		<Image Name="iconImage" Grid.Column="2" Source="{Binding FileIcon}"/>
+		<Image Name="iconImage" Grid.Column="2" Source="{Binding FilePath, Converter={StaticResource IconConverter}}"/>
 	</Grid>
 </UserControl>

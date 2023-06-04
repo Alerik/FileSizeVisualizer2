@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace FileSizeVisualizer2
 {
@@ -27,9 +21,15 @@ namespace FileSizeVisualizer2
 			if (Top.Children is List<BrowserFile> children)
 			{
 				if (index >= Top.Count || index < 0)
+				{
 					throw new IndexOutOfRangeException();
+				}
+
 				if (children[index].FileType == BrowserFile.FileTypes.File)
+				{
 					throw new InvalidOperationException();
+				}
+
 				fileStack.Push(children[index]);
 			}
 			else
@@ -40,7 +40,9 @@ namespace FileSizeVisualizer2
 		public void Back()
 		{
 			if (fileStack.Count > 1)
+			{
 				fileStack.Pop();
+			}
 		}
 	}
 }

@@ -2,17 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows.Threading;
-using System.Runtime.Serialization;
-using System.Drawing;
 
 namespace FileSizeVisualizer2
 {
@@ -38,11 +33,11 @@ namespace FileSizeVisualizer2
 		public int FileCount { get { return fileCount; } private set { fileCount = value; OnPropertyChanged(); } }
 
 		private int loadTime = 0;
-		public int LoadTime {get { return loadTime; }  private set { loadTime = value; OnPropertyChanged(); } }
+		public int LoadTime { get { return loadTime; } private set { loadTime = value; OnPropertyChanged(); } }
 
 
 		private long totalSize = 0;
-		public long TotalSize {get { return totalSize; }  private set { totalSize = value; OnPropertyChanged(); } }
+		public long TotalSize { get { return totalSize; } private set { totalSize = value; OnPropertyChanged(); } }
 
 		private string formattedSize = "";
 		public string FormattedSize { get { return formattedSize; } private set { formattedSize = value; OnPropertyChanged(); } }
@@ -76,7 +71,7 @@ namespace FileSizeVisualizer2
 		private List<BrowserFile> files = new();
 		public List<BrowserFile> Files
 		{
-			get{ return files; }
+			get { return files; }
 			private set { files = value; OnPropertyChanged(); }
 		}
 
@@ -110,9 +105,13 @@ namespace FileSizeVisualizer2
 			Array iconValues = Enum.GetValues(typeof(FontAwesomeIcon));
 
 			if (iconValues.GetValue(new Random().Next(iconValues.Length)) is object icon)
+			{
 				LoadingIcon = (FontAwesomeIcon)icon;
+			}
 			else
+			{
 				LoadingIcon = FontAwesomeIcon.Cog;
+			}
 
 			FileLoader.OnFilesLoaded += OnFilesLoaded;
 			FileLoader.OnFileSize += OnFileSize;
@@ -121,8 +120,10 @@ namespace FileSizeVisualizer2
 
 		private void Grid_Loaded(object sender, RoutedEventArgs e)
 		{
-			if(!string.IsNullOrEmpty(RootDirectory))
+			if (!string.IsNullOrEmpty(RootDirectory))
+			{
 				LoadIndex();
+			}
 		}
 
 		private async void LoadIndex()
@@ -136,20 +137,18 @@ namespace FileSizeVisualizer2
 			await FileLoader.StartLoad(index.Root);
 			IndexLoaded = true;
 			loadTimer.Stop();
-			
+
 			LoadDirectory();
 		}
 
 		private void LoadDirectory()
 		{
-
 			if (index is FileIndex _index)
 			{
 				List<FileViewer> viewers = new();
 
 				List<BrowserFile> files = _index.Top.Folders.Concat(_index.Top.Files).ToList();
 				files.Sort((a, b) => b.Size.CompareTo(a.Size));
-				files.ForEach(f => f.LoadIcon());
 				Files = files;
 			}
 		}
@@ -193,8 +192,10 @@ namespace FileSizeVisualizer2
 
 		private void filePanel_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if(filePanel.SelectedItem is BrowserFile file)
+			if (filePanel.SelectedItem is BrowserFile file)
+			{
 				Navigate(file.FilePath);
+			}
 		}
 	}
 }

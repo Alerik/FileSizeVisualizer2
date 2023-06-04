@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Runtime;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace FileSizeVisualizer2
 {
@@ -45,7 +40,7 @@ namespace FileSizeVisualizer2
 
 			public FilesLoadedArgs(int count)
 			{
-				Count = count;	
+				Count = count;
 			}
 		}
 		public class FileSizeArgs : EventArgs
@@ -54,7 +49,7 @@ namespace FileSizeVisualizer2
 
 			public FileSizeArgs(long size)
 			{
-				Size = size;	
+				Size = size;
 			}
 		}
 
