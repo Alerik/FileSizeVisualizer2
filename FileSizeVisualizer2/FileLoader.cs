@@ -21,6 +21,20 @@ namespace FileSizeVisualizer2
 			}
 		}
 
+		private static int loadedFolders = 0;
+		public static int LoadedFolders
+		{
+			get
+			{
+				return loadedFolders;
+			}
+			set
+			{
+				loadedFolders = value;
+				OnFoldersLoaded?.Invoke(typeof(FileLoader), new FoldersLoadedArgs(loadedFolders));
+			}
+		}
+
 		private static long totalSize = 0;
 		public static long TotalSize
 		{
@@ -43,6 +57,15 @@ namespace FileSizeVisualizer2
 				Count = count;
 			}
 		}
+		public class FoldersLoadedArgs : EventArgs
+		{
+			public readonly int Count;
+
+			public FoldersLoadedArgs(int count)
+			{
+				Count = count;
+			}
+		}
 		public class FileSizeArgs : EventArgs
 		{
 			public readonly long Size;
@@ -55,6 +78,9 @@ namespace FileSizeVisualizer2
 
 		public delegate void FilesLoadedHandler(object source, FilesLoadedArgs e);
 		public static event FilesLoadedHandler? OnFilesLoaded;
+
+		public delegate void FoldersLoadedHandler(object source, FoldersLoadedArgs e);
+		public static event FoldersLoadedHandler? OnFoldersLoaded;
 
 		public delegate void FilesSizeHandler(object source, FileSizeArgs e);
 		public static event FilesSizeHandler? OnFileSize;
@@ -132,20 +158,17 @@ namespace FileSizeVisualizer2
 					BrowserFile childBrowserFile = new(childFile, BrowserFile.FileTypes.File);
 					await Load(childBrowserFile);
 					file.AddChild(childBrowserFile);
+					TotalSize += childBrowserFile.Size;
+					LoadedFiles++;
 				}
 
-				LoadedFiles += files.Length;
-
-				long size = 0;
 				foreach (string childFolder in folders)
 				{
 					BrowserFile childBrowserFolder = new(childFolder, BrowserFile.FileTypes.Folder);
 					await Task.Run(() => Load(childBrowserFolder));
 					file.AddChild(childBrowserFolder);
-					size += childBrowserFolder.Size;
+					LoadedFolders++;
 				}
-
-				TotalSize += size;
 			}
 			file.Loaded = true;
 			return true;

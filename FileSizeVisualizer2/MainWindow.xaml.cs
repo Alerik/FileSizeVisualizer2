@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -31,6 +32,9 @@ namespace FileSizeVisualizer2
 
 		private int fileCount = 0;
 		public int FileCount { get { return fileCount; } private set { fileCount = value; OnPropertyChanged(); } }
+
+		private int folderCount = 0;
+		public int FolderCount { get { return folderCount; } private set { folderCount = value; OnPropertyChanged(); } }
 
 		private int loadTime = 0;
 		public int LoadTime { get { return loadTime; } private set { loadTime = value; OnPropertyChanged(); } }
@@ -86,6 +90,11 @@ namespace FileSizeVisualizer2
 			FileCount = args.Count;
 		}
 
+		private void OnFoldersLoaded(object sender, FileLoader.FoldersLoadedArgs args)
+		{
+			FolderCount = args.Count;
+		}
+
 		private void OnFileSize(object sender, FileLoader.FileSizeArgs args)
 		{
 			TotalSize = args.Size;
@@ -114,19 +123,20 @@ namespace FileSizeVisualizer2
 			}
 
 			FileLoader.OnFilesLoaded += OnFilesLoaded;
+			FileLoader.OnFoldersLoaded += OnFoldersLoaded;
 			FileLoader.OnFileSize += OnFileSize;
 			DataContext = this;
 		}
 
-		private void Grid_Loaded(object sender, RoutedEventArgs e)
+		private async void Grid_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (!string.IsNullOrEmpty(RootDirectory))
 			{
-				LoadIndex();
+				await LoadIndex();
 			}
 		}
 
-		private async void LoadIndex()
+		private async Task<bool> LoadIndex()
 		{
 			IndexLoaded = false;
 			index = new FileIndex(RootDirectory);
@@ -139,6 +149,7 @@ namespace FileSizeVisualizer2
 			loadTimer.Stop();
 
 			LoadDirectory();
+			return true;
 		}
 
 		private void LoadDirectory()
@@ -175,18 +186,18 @@ namespace FileSizeVisualizer2
 			LoadDirectory();
 		}
 
-		private void btnStartIndex_Click(object sender, RoutedEventArgs e)
+		private async void btnStartIndex_Click(object sender, RoutedEventArgs e)
 		{
 			RootDirectory = CurrentPath;
-			LoadIndex();
+			await LoadIndex();
 		}
 
-		private void txtNavbar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		private async void txtNavbar_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Enter)
 			{
 				RootDirectory = txtNavbar.Text;
-				LoadIndex();
+				await LoadIndex();
 			}
 		}
 
