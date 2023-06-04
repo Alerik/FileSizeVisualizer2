@@ -24,11 +24,18 @@ namespace FileSizeVisualizer2
 
 		public void Navigate(int index)
 		{
-			if (index >= Top.Count || index < 0)
-				throw new IndexOutOfRangeException();
-			if (Top.Children[index].FileType == BrowserFile.FileTypes.File)
-				throw new InvalidOperationException();
-			fileStack.Push(Top.Children[index]);
+			if (Top.Children is List<BrowserFile> children)
+			{
+				if (index >= Top.Count || index < 0)
+					throw new IndexOutOfRangeException();
+				if (children[index].FileType == BrowserFile.FileTypes.File)
+					throw new InvalidOperationException();
+				fileStack.Push(children[index]);
+			}
+			else
+			{
+				throw new InvalidOperationException("A non-folder BrowserFile was on the stack!");
+			}
 		}
 		public void Back()
 		{

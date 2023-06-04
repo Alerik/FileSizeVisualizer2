@@ -22,15 +22,6 @@ namespace FileSizeVisualizer2
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			double margin = 20;
-			////base.OnRender(drawingContext);
-			//Rect pieChart = new Rect(10, 10, Width, Width);
-
-			//double lastAngle = 0.0;
-			//for (int i = 0; i < Files.Count; i++)
-			//{
-			//	double arcAngle = 360 / Files.Count;
-			//	drawingContext.DrawArc(new Pen(Brushes.Red, 3), Brushes.Blue, pieChart, lastAngle, lastAngle + arcAngle);
-			//}			
 			double angle = 0.0;
 
 			Color end = Colors.Red;
@@ -49,19 +40,16 @@ namespace FileSizeVisualizer2
 				double proportion = ((double)Files[i].Size) / totalFileSize;
 				double propAngle = 2 * Math.PI * proportion;
 				double degAngle = propAngle * 180 / Math.PI;
-				Color color = PieView.LerpColor(start, end, Files[i].Size * 1.0f / totalFileSize);
+				Color color = Formatting.LerpColor(start, end, Files[i].Size * 1.0f / totalFileSize);
 				Brush b = new SolidColorBrush(color);
 				Pen p = new(Brushes.Gray, 1);
-				Point center = new Point(margin + radius, margin + radius);
+				Point center = new(margin + radius, margin + radius);
 
 				drawingContext.DrawArc(p, b, center, radius, angle, degAngle);
 				angle += degAngle;
 			}
 
 			long totalSize = Files.Sum(s => s.Size);
-			//drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, 100, 100));
-			//base.OnRender(drawingContext);
-
 		}
 
 		protected override Size MeasureOverride(Size constraint)

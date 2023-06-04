@@ -24,39 +24,15 @@ namespace FileSizeVisualizer2
 	/// <summary>
 	/// Interaction logic for FileViewer.xaml
 	/// </summary>
-	public partial class FileViewer : UserControl, INotifyPropertyChanged
+	public partial class FileViewer : UserControl
 	{
 		public static readonly DependencyProperty FileSizeProperty = DependencyProperty.Register("FileSize", typeof(string), typeof(FileViewer), new FrameworkPropertyMetadata(""));
 		public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(FileViewer), new FrameworkPropertyMetadata(""));
 		public static readonly DependencyProperty FileIconProperty = DependencyProperty.Register("FileIcon", typeof(Icon), typeof(FileViewer), new FrameworkPropertyMetadata(null));
 
-		public delegate void Navigator(string path);
-		public Navigator Navigate { get; set; }
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-
 		public FileViewer()
 		{
 			InitializeComponent();
-			//DataContext = this;
-		}
-		protected void OnPropertyChanged([CallerMemberName] string? name = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-		}
-
-
-		private void Button_Click(object sender, RoutedEventArgs e)
-		{
-		//	if (FileTypes == BrowserFile.FileTypes.Folder)
-		//	{
-		//		Navigate(FilePath);
-		//	}
-		//	else
-		//	{
-		//		Process.Start("explorer.exe", FilePath);
-		//	}
 		}
 	}
 }

@@ -26,10 +26,10 @@ namespace FileSizeVisualizer2
 			if (bytes < K)
 				return $"{bytes} bytes";
 			if (bytes < M)
-				return $"{(DivideUp(bytes, K)).ToString("#.##")} Kb";
+				return $"{DivideUp(bytes, K):#.##} Kb";
 			if (bytes < G)
-				return $"{(bytes * 1.0 / M).ToString("#.##")} Mb";
-			return $"{(bytes * 1.0 / G).ToString("#.##")} Gb";
+				return $"{bytes * 1.0 / M:#.##} Mb";
+			return $"{bytes * 1.0 / G:#.##} Gb";
 		}
 
 		public static void DrawArc(this DrawingContext dc, Pen pen, Brush brush, Point center, double radius, double startDegrees, double sweepDegrees)
@@ -37,9 +37,7 @@ namespace FileSizeVisualizer2
 			GeometryDrawing arc = CreateArcDrawing(center, radius, startDegrees, sweepDegrees);
 			arc.Brush = brush;
 			arc.Pen = pen;
-			bool s = arc.IsSealed;
 			dc.DrawGeometry(brush, pen, arc.Geometry);
-		//	arc.
 		}
 
 		/// <summary>
@@ -77,9 +75,60 @@ namespace FileSizeVisualizer2
 			}
 
 			// create the drawing
-			GeometryDrawing drawing = new();
-			drawing.Geometry = streamGeom;
+			GeometryDrawing drawing = new()
+			{
+				Geometry = streamGeom
+			};
 			return drawing;
+		}
+
+		private static float[] ToHSV(Color color)
+		{
+			System.Drawing.Color sdCol = System.Drawing.Color.FromArgb(255, color.R, color.G, color.B);
+			int max = Math.Max(color.R, Math.Max(color.G, color.B));
+			int min = Math.Min(color.R, Math.Min(color.G, color.B));
+
+			float hue = sdCol.GetHue();
+			float saturation = (max == 0) ? 0 : 1f - (1f * min / max);
+			float value = max / 255f;
+			return new float[] { hue, saturation, value };
+		}
+		public static Color HsvToRgb(float hue, float saturation, float value)
+		{
+			int hi = ((int)Math.Floor(hue / 60)) % 6;
+			double f = hue / 60 - Math.Floor(hue / 60);
+
+			value *= 255;
+			byte v =(byte)value;
+			byte p = (byte)(value * (1 - saturation));
+			byte q = (byte)(value * (1 - f * saturation));
+			byte t = (byte)(value * (1 - (1 - f) * saturation));
+
+			if (hi == 0)
+				return Color.FromArgb(255, v, t, p);
+			else if (hi == 1)
+				return Color.FromArgb(255, q, v, p);
+			else if (hi == 2)
+				return Color.FromArgb(255, p, v, t);
+			else if (hi == 3)
+				return Color.FromArgb(255, p, q, v);
+			else if (hi == 4)
+				return Color.FromArgb(255, t, p, v);
+			else
+				return Color.FromArgb(255, v, p, q);
+		}
+		public static Color LerpColor(Color startColor, Color endColor, float weight)
+		{
+			float[] sHsv = ToHSV(startColor);
+			float[] eHsv = ToHSV(endColor);
+			float[] oHsv = new float[3];
+
+			oHsv[0] = sHsv[0] * (1 - weight) + eHsv[0] * weight;
+			oHsv[1] = sHsv[1] * (1 - weight) + eHsv[1] * weight;
+			oHsv[2] = sHsv[2] * (1 - weight) + eHsv[2] * weight;
+
+
+			return HsvToRgb(oHsv[0], oHsv[1], oHsv[2]);
 		}
 	}
 }

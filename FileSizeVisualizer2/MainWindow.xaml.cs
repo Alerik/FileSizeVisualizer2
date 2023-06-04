@@ -48,7 +48,6 @@ namespace FileSizeVisualizer2
 		public string FormattedSize { get { return formattedSize; } private set { formattedSize = value; OnPropertyChanged(); } }
 		public FontAwesomeIcon LoadingIcon { get; private set; }
 		private FileIndex? index;
-		private PieView? pieView;
 
 		private const string START_DIRECTORY = "";
 		private string rootDirectory;
@@ -144,42 +143,23 @@ namespace FileSizeVisualizer2
 		private void LoadDirectory()
 		{
 
-			List<FileViewer> viewers = new();
+			if (index is FileIndex _index)
+			{
+				List<FileViewer> viewers = new();
 
-			List<BrowserFile> files = index.Top.Folders.Concat(index.Top.Files).ToList();
-			files.Sort((a, b) => b.Size.CompareTo(a.Size));
-			files.ForEach(f => f.LoadIcon());
-			Files = files;
-			//Files.AddRange(files);
-			//filePanel.ItemsSource = Files;
-
-			//List<FileViewer> large = new();
-
-			//for (int i = 0; i < 5; i++)
-			//{
-			//	if (i >= viewers.Count)
-			//		break;
-			//	large.Add(viewers[i]);
-			//}
-
-			//if(pieView != null)
-			//{
-
-			//}
-			//filePanel.InvalidateVisual();
-			//pieView = new PieView(large, index.Top.Size);
-			//grid.Children.Add(pieView);
-			//pieView.SetValue(Grid.ColumnProperty, 1);
-			//pieView.SetValue(Grid.RowProperty, 1);
-			//pieView.InvalidateVisual();
+				List<BrowserFile> files = _index.Top.Folders.Concat(_index.Top.Files).ToList();
+				files.Sort((a, b) => b.Size.CompareTo(a.Size));
+				files.ForEach(f => f.LoadIcon());
+				Files = files;
+			}
 		}
 
 		public void Navigate(string path)
 		{
 			try
 			{
-				int navIndex = index.Top.Children?.FindIndex(f => f.Path == path) ?? 0;
-				index.Navigate(navIndex);
+				int navIndex = index?.Top.Children?.FindIndex(f => f.Path == path) ?? 0;
+				index?.Navigate(navIndex);
 				LoadDirectory();
 			}
 			catch (InvalidOperationException e)
@@ -192,7 +172,7 @@ namespace FileSizeVisualizer2
 		private void navBack_Click(object sender, RoutedEventArgs e)
 		{
 
-			index.Back();
+			index?.Back();
 			LoadDirectory();
 		}
 
