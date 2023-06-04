@@ -23,7 +23,8 @@ namespace FileSizeVisualizer2
 	{
 		private readonly DispatcherTimer loadTimer;
 		private bool indexLoaded = false;
-		public string Title
+
+		public string WindowTitle
 		{
 			get
 			{
@@ -58,6 +59,7 @@ namespace FileSizeVisualizer2
 			{
 				rootDirectory = value;
 				OnPropertyChanged();
+				OnPropertyChanged("WindowTitle");
 			}
 		}
 
