@@ -164,7 +164,7 @@ namespace FileSizeVisualizer2
 			}
 		}
 
-		public void Navigate(string path)
+		public async void Navigate(string path)
 		{
 			try
 			{
@@ -179,11 +179,11 @@ namespace FileSizeVisualizer2
 			CurrentPath = path;
 		}
 
-		private void navBack_Click(object sender, RoutedEventArgs e)
+		private async void navBack_Click(object sender, RoutedEventArgs e)
 		{
-
 			index?.Back();
 			LoadDirectory();
+			CurrentPath = index?.Top.Path ?? "";
 		}
 
 		private async void btnStartIndex_Click(object sender, RoutedEventArgs e)
