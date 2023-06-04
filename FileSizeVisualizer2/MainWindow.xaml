@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:fa="http://schemas.fontawesome.io/icons/"
 		xmlns:mi="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
-        xmlns:local="clr-namespace:FileSizeVisualizer2"
-        mc:Ignorable="d"
+        xmlns:local="clr-namespace:FileSizeVisualizer2" d:DataContext="{d:DesignInstance Type=local:FileViewer}"
+		mc:Ignorable="d"
         Title="{Binding Title}" Height="450" Width="800" Icon="/MainWindowIcon.png">
 	<Window.Resources>
 		<Style x:Key="loaderStyle" TargetType="{x:Type StackPanel}">
@@ -83,10 +83,27 @@
 			</StackPanel>
 			<TextBlock Text="{Binding FormattedSize}" FontSize="28" TextAlignment="Center" FontWeight="DemiBold"/>
 		</StackPanel>
-		<ScrollViewer Style="{StaticResource inverseLoaderStyle}" Grid.Row="1" Grid.RowSpan="3">
-			<StackPanel Name="filePanel">
-				
-			</StackPanel>
+
+		<Grid Grid.Row="1" Panel.ZIndex="1" Margin="0,4,0,0" IsHitTestVisible="False">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="8"/>
+				<ColumnDefinition Width="5*"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="80"/>
+				<ColumnDefinition Width="8"/>
+			</Grid.ColumnDefinitions>
+			<TextBlock Text="Name" Grid.Column="1"/>
+			<TextBlock Text="Size" Grid.Column="2" Margin="-16,0,0,0"/>
+		</Grid>
+
+		<ScrollViewer Style="{StaticResource inverseLoaderStyle}" Grid.Row="1" Grid.RowSpan="3" Padding="0, 24, 0, 0">
+			<ListBox Name="filePanel" ItemsSource="{Binding Files}" SelectionChanged="filePanel_SelectionChanged" Padding="0,0,0,0" HorizontalContentAlignment="Stretch">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<local:FileViewer Width="Auto"></local:FileViewer>
+					</DataTemplate>	
+				</ListBox.ItemTemplate>
+			</ListBox>
 		</ScrollViewer>
 	</Grid>
 </Window>

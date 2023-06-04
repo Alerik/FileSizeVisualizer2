@@ -72,6 +72,13 @@ namespace FileSizeVisualizer2
 			}
 		}
 
+		private List<BrowserFile> files = new();
+		public List<BrowserFile> Files
+		{
+			get{ return files; }
+			private set { files = value; OnPropertyChanged(); }
+		}
+
 		public event PropertyChangedEventHandler? PropertyChanged;
 		protected void OnPropertyChanged([CallerMemberName] string? name = null)
 		{
@@ -134,44 +141,35 @@ namespace FileSizeVisualizer2
 
 		private void LoadDirectory()
 		{
-			filePanel.Children.Clear();
 
 			List<FileViewer> viewers = new();
 
-			foreach (BrowserFile folder in index.Top.Folders)
-			{
-				viewers.Add(new FileViewer(folder, Navigate));
-			}
-			foreach (BrowserFile file in index.Top.Files)
-			{
-				viewers.Add(new FileViewer(file, Navigate));
-			}
-			viewers.Sort((a, b) => b.File.Size.CompareTo(a.File.Size));
+			List<BrowserFile> files = index.Top.Folders.Concat(index.Top.Files).ToList();
+			files.Sort((a, b) => b.Size.CompareTo(a.Size));
+			files.ForEach(f => f.LoadIcon());
+			Files = files;
+			//Files.AddRange(files);
+			//filePanel.ItemsSource = Files;
 
-			foreach (FileViewer view in viewers)
-			{
-				filePanel.Children.Add(view);
-			}
+			//List<FileViewer> large = new();
 
-			List<FileViewer> large = new();
+			//for (int i = 0; i < 5; i++)
+			//{
+			//	if (i >= viewers.Count)
+			//		break;
+			//	large.Add(viewers[i]);
+			//}
 
-			for (int i = 0; i < 5; i++)
-			{
-				if (i >= viewers.Count)
-					break;
-				large.Add(viewers[i]);
-			}
+			//if(pieView != null)
+			//{
 
-			if(pieView != null)
-			{
-
-			}
-			filePanel.InvalidateVisual();
-			pieView = new PieView(large, index.Top.Size);
-			grid.Children.Add(pieView);
-			pieView.SetValue(Grid.ColumnProperty, 1);
-			pieView.SetValue(Grid.RowProperty, 1);
-			pieView.InvalidateVisual();
+			//}
+			//filePanel.InvalidateVisual();
+			//pieView = new PieView(large, index.Top.Size);
+			//grid.Children.Add(pieView);
+			//pieView.SetValue(Grid.ColumnProperty, 1);
+			//pieView.SetValue(Grid.RowProperty, 1);
+			//pieView.InvalidateVisual();
 		}
 
 		public void Navigate(string path)
@@ -209,6 +207,12 @@ namespace FileSizeVisualizer2
 				RootDirectory = txtNavbar.Text;
 				LoadIndex();
 			}
+		}
+
+		private void filePanel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if(filePanel.SelectedItem is BrowserFile file)
+				Navigate(file.FilePath);
 		}
 	}
 }

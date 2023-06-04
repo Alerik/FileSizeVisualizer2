@@ -22,35 +22,35 @@ namespace FileSizeVisualizer2
 
 		protected override void OnRender(DrawingContext drawingContext)
 		{
-			double angle = 0.0;
-			Color start = Colors.Red;
-			Color end = Colors.Green;
+			//double angle = 0.0;
+			//Color start = Colors.Red;
+			//Color end = Colors.Green;
 
-			long maxFile = 0;
-			for (int i = 0; i < Math.Min(viewers.Count, 6); i++)
-			{
-				if (viewers[i].File.Size > maxFile)
-					maxFile = viewers[i].File.Size;
-			}
-			drawingContext.DrawEllipse(Brushes.LightGray, null, new Point(10 + radius,radius), radius, radius);
-			for (int i = 0; i < Math.Min(viewers.Count, 6); i++)
-			{
-				double proportion = ((double)viewers[i].File.Size) / maxSize;
-				double propAngle = 2 * Math.PI * proportion;
-				double degAngle = propAngle * 180 / Math.PI;
-				//Color color = LerpColor(start, end, (float)viewers[i].File.Size / maxFile * 1 / (i + 1));
-				Color color = LerpColor(start, end, i / (float)(Math.Min(viewers.Count, 6)-1));
-				Brush b = new SolidColorBrush(color);
-				Pen p = new(Brushes.Gray, 1);
-				Rect r = new(10, 0, 2 * radius, 2 * radius);
+			//long maxFile = 0;
+			//for (int i = 0; i < Math.Min(viewers.Count, 6); i++)
+			//{
+			//	if (viewers[i].File.Size > maxFile)
+			//		maxFile = viewers[i].File.Size;
+			//}
+			//drawingContext.DrawEllipse(Brushes.LightGray, null, new Point(10 + radius,radius), radius, radius);
+			//for (int i = 0; i < Math.Min(viewers.Count, 6); i++)
+			//{
+			//	double proportion = ((double)viewers[i].File.Size) / maxSize;
+			//	double propAngle = 2 * Math.PI * proportion;
+			//	double degAngle = propAngle * 180 / Math.PI;
+			//	//Color color = LerpColor(start, end, (float)viewers[i].File.Size / maxFile * 1 / (i + 1));
+			//	Color color = LerpColor(start, end, i / (float)(Math.Min(viewers.Count, 6)-1));
+			//	Brush b = new SolidColorBrush(color);
+			//	Pen p = new(Brushes.Gray, 1);
+			//	Rect r = new(10, 0, 2 * radius, 2 * radius);
 
-				drawingContext.DrawArc(p, b, r, angle, degAngle);
-				angle += degAngle;
-			}
+			//	drawingContext.DrawArc(p, b, r, angle, degAngle);
+			//	angle += degAngle;
+			//}
 
-			long totalSize = viewers.Sum(s => s.File.Size);
-			//drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, 100, 100));
-			//base.OnRender(drawingContext);
+			//long totalSize = viewers.Sum(s => s.File.Size);
+			////drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, 100, 100));
+			////base.OnRender(drawingContext);
 		}
 
 		private static float[] ToHSV(Color color)
