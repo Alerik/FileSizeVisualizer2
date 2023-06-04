@@ -85,15 +85,13 @@
 			<TextBlock Text="Size" Grid.Column="2" Margin="-16,0,0,0"/>
 		</Grid>
 
-		<ScrollViewer Style="{StaticResource inverseLoaderStyle}" Grid.Row="1" Grid.RowSpan="3" Padding="0, 24, 0, 0">
-			<ListBox Name="filePanel" ItemsSource="{Binding Files}" SelectionChanged="filePanel_SelectionChanged" Padding="0,0,0,0" HorizontalContentAlignment="Stretch">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<local:FileViewer Width="Auto"></local:FileViewer>
-					</DataTemplate>	
-				</ListBox.ItemTemplate>
-			</ListBox>
-		</ScrollViewer>
+		<ListBox Name="filePanel" ItemsSource="{Binding Files}" SelectionChanged="filePanel_SelectionChanged" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource inverseLoaderStyle}" Padding="0,24,0,0" HorizontalContentAlignment="Stretch" >
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<local:FileViewer Width="Auto"></local:FileViewer>
+				</DataTemplate>	
+			</ListBox.ItemTemplate>
+		</ListBox>
 
 		<StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource inverseLoaderStyle}">
 			<local:FolderInfoControl Files="{Binding Files}" HorizontalAlignment="Stretch"></local:FolderInfoControl>
